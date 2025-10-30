@@ -7,7 +7,7 @@ This repository contains a C++20 implementation of a Thread Pool, using the most
 
 - Thread_Pool(n_of_workers);
 
-Instantiate a Thread Pool object with n_of_threads workers:
+Instantiate a Thread Pool object with n_of_workers workers:
 
     Thread_Pool pool(9); // 9 workers
 
