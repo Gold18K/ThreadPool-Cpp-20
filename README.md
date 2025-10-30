@@ -1,50 +1,39 @@
 # ThreadPool-Cpp
-This repository contains a C++20 implementation of a Thread Pool, with various extra functionalities!
+This repository contains a C++20 implementation of a Thread Pool, using the most recent std::jthreads and implementing various extra functionalities!
 
 ## Documentation
 
 ### Constructors
 
-- iK_from_i32(_n: i32) -> iK;
+- Thread_Pool(n_of_threads);
 
-Instantiate an iK integer from an i32;
+Instantiate a Thread Pool object with n_of_threads workers:
 
-    @compute
-    @workgroup_size(1, 1)
-    fn cs() {
-        var a = i128_from_i32(-42);
-    }
+    Thread_Pool pool(9); // 9 Workers
 
-- iK_from_u32(_n: u32) -> iK;
+You can also instantiate a Thread Pool with 0 workers: it will just collect tasks in its queue until you change their numbers:
 
-Instantiate an iK integer from an u32;
+    Thread_Pool pool(0); // No workers
 
-    @compute
-    @workgroup_size(1, 1)
-    fn cs() {
-        var a = i64_from_u32(42);
-    }
+### Methods
 
-- iK_from_iJ(_n: iJ) -> iK;
+- add_task(task);
 
-Instantiate an iK integer from an iJ, useful when you realize that the result of your future operations might not fit in the current iJ;
+Add a generic task to the Thread Pool queue:
 
-    @compute
-    @workgroup_size(1, 1)
-    fn cs() {
-        var a = i64_from_i32(-42);
-        var b = i128_from_i64(a);
-    }
+    Thread_Pool pool(5);
 
-- iK_from_u32_array(_number: array<u32, L>, _sign: i32) -> iK;
+    pool.add_task([]() -> void {
+        std::cout << "Hello Thread Pool!\n";
+    });
 
-Instantiate an iK integer from an array of L u32 integers, useful when moving a BigInt from CPU to GPU;
+If your task must return something, store the future returned by the add_task method, and call get():
 
-_sign must be either 1 (Non-negative integer) or -1 (Negative integer), undefined behaviour otherwise;
+    Thread_Pool pool(12);
 
-    @compute
-    @workgroup_size(1, 1)
-    fn cs() {
-        var arr = array<u32, 4>(1, 2, 3, 4);
-        var a   = i128_from_u32_array(arr, 1); // Now contains 1*2^96 + 2*2^64 + 3*2^32 + 4, or 79228162551157825753847955460
-    }
+    auto future = pool.add_task([]() -> std::string {
+        return "Hello Thread Pool!\n";
+    });
+
+    std::cout << future.get();
+
