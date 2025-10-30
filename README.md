@@ -137,7 +137,7 @@ A callback void function to be run each time the Thread Pool has no pending task
         });
     }
 
-    pool.set_idle_task([]() -> void {
+    pool.set_idle_callback([]() -> void {
         std::cout << "Idling...\n";
     });
 
@@ -155,7 +155,7 @@ Removes the callback void function, and will not be called anymore (The method i
         });
     }
 
-    pool.set_idle_task([]() -> void {
+    pool.set_idle_callback([]() -> void {
         std::cout << "Idling...\n";
     });
 
