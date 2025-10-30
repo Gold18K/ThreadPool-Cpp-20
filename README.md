@@ -45,7 +45,7 @@ Change the number of workers of the Thread Pool (The method is thread safe, and 
 
     pool.change_number_of_workers(3);
 
-If the new number of workers is the same as the current one, nothing happens;
+If the new number of workers is the same as the current one, nothing happens:
 
     Thread_Pool pool(5);
 
@@ -57,7 +57,7 @@ If the new number of workers is the same as the current one, nothing happens;
 
     pool.change_number_of_workers(5); // Nothing happens
 
-If the new number of workers is greater than the current one, new workers will be added and will immediately start running tasks;
+If the new number of workers is greater than the current one, new workers will be added and will immediately start running tasks:
 
     Thread_Pool pool(5);
 
@@ -71,7 +71,7 @@ If the new number of workers is greater than the current one, new workers will b
 
     pool.change_number_of_workers(20); // The remaining 15 tasks are immediately captured by the new workers
 
-If the new number of workers is less than the current one, the method will wait until the occupied workers that must be removed have finished their tasks;
+If the new number of workers is less than the current one, the method will wait until the occupied workers that must be removed have finished their tasks:
 
     Thread_Pool pool(5);
 
