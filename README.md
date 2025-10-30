@@ -50,8 +50,8 @@ If the new number of workers is the same as the current one, nothing happens;
     Thread_Pool pool(5);
 
     for (int i = 0; i != 20; ++i) {
-        pool.add_task([]() -> bool {
-            return true;
+        pool.add_task([]() -> void {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         });
     }
 
@@ -62,9 +62,8 @@ If the new number of workers is greater than the current one, new workers will b
     Thread_Pool pool(5);
 
     for (int i = 0; i != 20; ++i) {
-        pool.add_task([]() -> bool {
+        pool.add_task([]() -> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            return true;
         });
     }
 
@@ -77,9 +76,8 @@ If the new number of workers is less than the current one, the method will wait 
     Thread_Pool pool(5);
 
     for (int i = 0; i != 20; ++i) {
-        pool.add_task([]() -> bool {
+        pool.add_task([]() -> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            return true;
         });
     }
 
@@ -95,9 +93,8 @@ The wait flag decides if you want to also wait on tasks that are already being e
     Thread_Pool pool1(7);
 
     for (int i = 0; i != 20; ++i) {
-        pool1.add_task([]() -> bool {
+        pool1.add_task([]() -> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            return true;
         });
     }
 
@@ -106,13 +103,26 @@ The wait flag decides if you want to also wait on tasks that are already being e
     Thread_Pool pool2(7);
 
     for (int i = 0; i != 20; ++i) {
-        pool2.add_task([]() -> bool {
+        pool2.add_task([]() -> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            return true;
         });
     }
 
     pool2.flush_tasks(false); // The 13 remaining tasks are removed from the queue: The method returns immediately, not waiting for the already captured 7 tasks to be completed
+
+- wait()
+
+The method will wait here until all tasks are executed (The method is thread safe, and can be called from any thread).
+
+    Thread_Pool pool(1);
+
+    for (int i = 0; i != 20; ++i) {
+        pool.add_task([]() -> void {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        });
+    }
+
+    pool.wait(); // The method will wait here until all 20 tasks are executed
 
 - set_idle_callback(callback)
 
@@ -121,9 +131,8 @@ A callback void function to be run each time the Thread Pool has no pending task
     Thread_Pool pool(8);
 
     for (int i = 0; i != 20; ++i) {
-        pool.add_task([]() -> bool {
+        pool.add_task([]() -> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            return true;
         });
     }
 
@@ -140,9 +149,8 @@ Removes the callback void function, and will not be called anymore (The method i
     Thread_Pool pool(8);
 
     for (int i = 0; i != 20; ++i) {
-        pool.add_task([]() -> bool {
+        pool.add_task([]() -> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            return true;
         });
     }
 
