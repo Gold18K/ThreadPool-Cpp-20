@@ -88,6 +88,7 @@ If the new number of workers is less than the current one, the method will wait 
 - flush_tasks(wait)
 
 Flushes the entire queue, removing all pending tasks (The method is thread safe, and can be called from any thread).
+
 The wait flag decides if you want to also wait on tasks that are already being executed by the workers (Default value: true):
 
     Thread_Pool pool1(7);
