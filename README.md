@@ -86,3 +86,70 @@ If the new number of workers is less than the current one, the method will wait 
     // 5 Tasks are now being executed, remaining 15 tasks waiting for free workers
 
     pool.change_number_of_workers(1); // The Thread Pool is waiting for 4 of the 5 workers to be free, they are then removed from the Thread Pool
+
+- flush_tasks(wait)
+
+Flushes the entire queue, removing all pending tasks (The method is thread safe, and can be called from any thread).
+The wait flag decides if you want to also wait on tasks that are already being executed by the workers (Default value: true):
+
+    Thread_Pool pool1(7);
+
+    for (int i = 0; i != 20; ++i) {
+        pool1.add_task([]() -> bool {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return true;
+        });
+    }
+
+    pool1.flush_tasks(); // The 13 remaining tasks are removed from the queue: The method will also wait here until the already captured 7 tasks are completed
+
+    Thread_Pool pool2(7);
+
+    for (int i = 0; i != 20; ++i) {
+        pool2.add_task([]() -> bool {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return true;
+        });
+    }
+
+    pool2.flush_tasks(false); // The 13 remaining tasks are removed from the queue: The method returns immediately, not waiting for the already captured 7 tasks to be completed
+
+- set_idle_callback(callback)
+
+A callback void function to be run each time the Thread Pool has no pending tasks and all workers are available (The method is thread safe, and can be called from any thread):
+
+    Thread_Pool pool(8);
+
+    for (int i = 0; i != 20; ++i) {
+        pool.add_task([]() -> bool {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return true;
+        });
+    }
+
+    pool.set_idle_task([]() -> void {
+        std::cout << "Idling...\n";
+    });
+
+    // When all 20 tasks are executed, the callback is executed
+
+- remove_idle_callback()
+
+Removes the callback void function, and will not be called anymore (The method is thread safe, and can be called from any thread):
+
+    Thread_Pool pool(8);
+
+    for (int i = 0; i != 20; ++i) {
+        pool.add_task([]() -> bool {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return true;
+        });
+    }
+
+    pool.set_idle_task([]() -> void {
+        std::cout << "Idling...\n";
+    });
+
+    pool.remove_idle_callback();
+
+    // When all 20 tasks are executed, nothing happens
